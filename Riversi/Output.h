@@ -8,22 +8,92 @@
 
 #ifndef Riversi_Output_h
 #define Riversi_Output_h
-#include <fstream>
-#include <string>
-#include <vector>
 using namespace std;
-class Input
+class Output
 {
 private:
-    ofstream outputFile;
-    void WriteNextState();
-    void WriteTraverseLog();
+    static ofstream outputFile;
+    void WriteNextState(State nextState);
+    void WriteMinimaxTraverseLog(vector<Node> traverseLog);
+    void WriteAlphaBetaTraverseLog(vector<AlphaBetaNode> traverseLog);
     
 public:
-    Output(string inputFileName="Output.txt", State nextState);
-    Output(string inputFileName="Input.txt", State nextState, vector<Node>traverseLog);
-    Output(string inputFileName="Input.txt", State nextState, vector<AlphaBetaNode>traverseLog);
+    Output(State nextState, string outputFileName="output.txt");
+    Output(State nextState, vector<Node>traverseLog, string outputFileName="output.txt");
+    Output(State nextState, vector<AlphaBetaNode>traverseLog, string outputFileName="output.txt");
 };
 
+//CONSTRUCTORS
+Output::Output(State nextState, string outputFileName)
+{
+    char *fileName=new char[outputFileName.size()+1];
+    fileName[outputFileName.size()]=0;
+    memcpy(fileName,outputFileName.c_str(),outputFileName.size());
+    outputFile.open(fileName);
+    WriteNextState(nextState);
+    outputFile.close();
+}
 
+Output::Output(State nextState, vector<Node>traverseLog, string outputFileName)
+{
+    char *fileName=new char[outputFileName.size()+1];
+    fileName[outputFileName.size()]=0;
+    memcpy(fileName,outputFileName.c_str(),outputFileName.size());
+    outputFile.open(fileName);
+    WriteNextState(nextState);
+    WriteMinimaxTraverseLog(traverseLog);
+    outputFile.close();
+}
+
+Output::Output(State nextState, vector<AlphaBetaNode>traverseLog, string outputFileName)
+{
+    char *fileName=new char[outputFileName.size()+1];
+    fileName[outputFileName.size()]=0;
+    memcpy(fileName,outputFileName.c_str(),outputFileName.size());
+    outputFile.open(fileName);
+    WriteNextState(nextState);
+    WriteAlphaBetaTraverseLog(traverseLog);
+    outputFile.close();
+}
+
+//PRIVATE FUNCTIONS
+
+void Output::WriteNextState(State nextState)
+{
+    for (int row=0; row<nextState.size(); row++)
+    {
+        for (int column=0; column<nextState[row].size(); column++)
+            outputFile<<nextState[row][column];
+        outputFile<<endl;
+    }
+}
+void Output::WriteMinimaxTraverseLog(vector<Node> traverseLog)
+{
+    for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
+    {
+        outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
+        if (traverseLog[logEntry].value == static_cast<int>(Infinity::NegativeInfinity)) outputFile<<"-Infinity"<<endl;
+        else if(traverseLog[logEntry].value == static_cast<int>(Infinity::PositiveInfinity)) outputFile<<"Infinity"<<endl;
+        else outputFile<<traverseLog[logEntry].value<<endl;
+    }
+}
+
+void Output::WriteAlphaBetaTraverseLog(vector<AlphaBetaNode> traverseLog)
+{
+    for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
+    {
+        outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
+        if (traverseLog[logEntry].value == static_cast<int>(Infinity::NegativeInfinity)) outputFile<<"-Infinity"<<",";
+        else if(traverseLog[logEntry].value == static_cast<int>(Infinity::PositiveInfinity))outputFile<<"Infinity"<<",";
+        else outputFile<<traverseLog[logEntry].value<<",";
+        
+        if (traverseLog[logEntry].alpha == static_cast<int>(Infinity::NegativeInfinity)) outputFile<<"-Infinity"<<",";
+        else if(traverseLog[logEntry].alpha == static_cast<int>(Infinity::PositiveInfinity))outputFile<<"Infinity"<<",";
+        else outputFile<<traverseLog[logEntry].alpha<<",";
+        
+        if (traverseLog[logEntry].beta == static_cast<int>(Infinity::NegativeInfinity)) outputFile<<"-Infinity"<<endl;
+        else if(traverseLog[logEntry].beta == static_cast<int>(Infinity::PositiveInfinity))outputFile<<"Infinity"<<endl;
+        else outputFile<<traverseLog[logEntry].beta<<endl;
+    }
+}
 #endif
