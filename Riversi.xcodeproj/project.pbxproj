@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B84A67D19E8BDA300099A2D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B84A67C19E8BDA300099A2D /* main.cpp */; };
+		8B84A67D19E8BDA300099A2D /* agent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B84A67C19E8BDA300099A2D /* agent.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		8B84A67919E8BDA300099A2D /* Riversi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Riversi; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B84A67C19E8BDA300099A2D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		8B84A67C19E8BDA300099A2D /* agent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = agent.cpp; sourceTree = "<group>"; };
 		8B84A68519E8CE1000099A2D /* Input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		8B84A68719E8D88300099A2D /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		8B84A68B19E9ED7000099A2D /* AdversialSearchAlgorithms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdversialSearchAlgorithms.h; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 		8B84A67B19E8BDA300099A2D /* Riversi */ = {
 			isa = PBXGroup;
 			children = (
-				8B84A67C19E8BDA300099A2D /* main.cpp */,
+				8B84A67C19E8BDA300099A2D /* agent.cpp */,
 				8B84A68519E8CE1000099A2D /* Input.h */,
 				8B84A68719E8D88300099A2D /* Game.h */,
 				8B84A68B19E9ED7000099A2D /* AdversialSearchAlgorithms.h */,
@@ -126,7 +126,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B84A67D19E8BDA300099A2D /* main.cpp in Sources */,
+				8B84A67D19E8BDA300099A2D /* agent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
