@@ -90,17 +90,15 @@ Game::Game(char player, char opponentPlayer, State initialState)
     this->initialState = initialState;
     this->boardSize = (int)initialState.size();
     this->cutOffDepth = -1;
-    this->boardWeights =
+    int boardValues[8][8] = {{99,-8,8,6,6,8,-8,99},{-8,-24,-4,-3,-3,-4,-24,-8},{8,-4,7,4,4,7,-4,8},{6,-3,4,0,0,4,-3,6},{6,-3,4,0,0,4,-3,6},{8,-4,7,4,4,7,-4,8},{-8,-24,-4,-3,-3,-4,-24,-8},{99,-8,8,6,6,8,-8,99}};
+    for (int row=0; row<8; row++)
     {
-        {99,-8,8,6,6,8,-8,99},
-        {-8,-24,-4,-3,-3,-4,-24,-8},
-        {8,-4,7,4,4,7,-4,8},
-        {6,-3,4,0,0,4,-3,6},
-        {6,-3,4,0,0,4,-3,6},
-        {8,-4,7,4,4,7,-4,8},
-        {-8,-24,-4,-3,-3,-4,-24,-8},
-        {99,-8,8,6,6,8,-8,99}
-    };
+        this->boardWeights.push_back(vector<int>());
+        for (int column=0; column<8; column++)
+        {
+            this->boardWeights[row].push_back(boardValues[row][column]);
+        }
+    }
 }
 
 Game::Game(char player, char opponentPlayer, State initialState, vector<vector<int> > positionWeights)
@@ -119,17 +117,15 @@ Game::Game(char player, char opponentPlayer, State initialState, int cutOffDepth
     this->initialState = initialState;
     this->boardSize = (int)initialState.size();
     this->cutOffDepth = cutOffDepth;
-    this->boardWeights =
+    int boardValues[8][8] = {{99,-8,8,6,6,8,-8,99},{-8,-24,-4,-3,-3,-4,-24,-8},{8,-4,7,4,4,7,-4,8},{6,-3,4,0,0,4,-3,6},{6,-3,4,0,0,4,-3,6},{8,-4,7,4,4,7,-4,8},{-8,-24,-4,-3,-3,-4,-24,-8},{99,-8,8,6,6,8,-8,99}};
+    for (int row=0; row<8; row++)
     {
-        {99,-8,8,6,6,8,-8,99},
-        {-8,-24,-4,-3,-3,-4,-24,-8},
-        {8,-4,7,4,4,7,-4,8},
-        {6,-3,4,0,0,4,-3,6},
-        {6,-3,4,0,0,4,-3,6},
-        {8,-4,7,4,4,7,-4,8},
-        {-8,-24,-4,-3,-3,-4,-24,-8},
-        {99,-8,8,6,6,8,-8,99}
-    };
+        this->boardWeights.push_back(vector<int>());
+        for (int column=0; column<8; column++)
+        {
+            this->boardWeights[row].push_back(boardValues[row][column]);
+        }
+    }
 }
 
 Game::Game(char player, char opponentPlayer, State initialState, int cutOffDepth, vector<vector<int> > positionWeights)
@@ -165,7 +161,8 @@ bool Game::TerminalTest(State state)
 {
     if (AllCellsFilled(state)) return true;
     vector<Cell> actions = Actions();
-    if (!actions.size()) return true;
+    Game newGame = *new Game(opponentPlayer, player, state, cutOffDepth);
+    if (!actions.size() && !newGame.Actions().size()) return true;
     return false;
 }
 
@@ -243,7 +240,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     {
         int columnChecker = cell.row + 1;
         int rowChecker = cell.column + 1;
-        while (initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column] && columnChecker < boardSize && rowChecker < boardSize) {
+        while (columnChecker < boardSize && rowChecker < boardSize && initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column]) {
             columnChecker++; rowChecker++;
         }
         if (columnChecker<boardSize && rowChecker < boardSize && initialState[columnChecker][rowChecker]== player)
@@ -253,7 +250,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     if (cell.row > 0 && initialState[cell.row-1][cell.column] == '*')
     {
         int columnChecker = cell.row + 1;
-        while (initialState[columnChecker][cell.column] == initialState[cell.row][cell.column] && columnChecker < boardSize) columnChecker++;
+        while (columnChecker < boardSize && initialState[columnChecker][cell.column] == initialState[cell.row][cell.column]) columnChecker++;
         if (columnChecker<boardSize && initialState[columnChecker][cell.column]== player)
             moves.push_back(Cell(cell.row-1, cell.column, boardWeights[cell.row-1][cell.column]));
     }
@@ -262,7 +259,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     {
         int columnChecker = cell.row + 1;
         int rowChecker = cell.column - 1;
-        while (initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column] && columnChecker < boardSize && rowChecker >= 0) {
+        while (columnChecker < boardSize && rowChecker >= 0 && initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column]) {
             columnChecker++; rowChecker--;
         }
         if (columnChecker<boardSize && rowChecker >= 0 && initialState[columnChecker][rowChecker]== player)
@@ -272,7 +269,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     if (cell.column > 0 && initialState[cell.row][cell.column-1] == '*')
     {
         int rowChecker = cell.column + 1;
-        while (initialState[cell.row][rowChecker] == initialState[cell.row][cell.column] && rowChecker < boardSize) rowChecker++;
+        while (rowChecker < boardSize && initialState[cell.row][rowChecker] == initialState[cell.row][cell.column]) rowChecker++;
         if (rowChecker<boardSize && initialState[cell.row][rowChecker]==player)
             moves.push_back(Cell(cell.row, cell.column-1, boardWeights[cell.row][cell.column-1]));
     }
@@ -280,7 +277,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     if (cell.column<boardSize-1 && initialState[cell.row][cell.column+1] == '*')
     {
         int rowChecker = cell.column - 1;
-        while (initialState[cell.row][rowChecker] == initialState[cell.row][cell.column] && rowChecker >= 0)
+        while (rowChecker >= 0 && initialState[cell.row][rowChecker] == initialState[cell.row][cell.column])
             rowChecker--;
         if (rowChecker>=0 && initialState[cell.row][rowChecker]==player)
             moves.push_back(Cell(cell.row, cell.column+1, boardWeights[cell.row][cell.column+1]));
@@ -290,7 +287,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     {
         int columnChecker = cell.row - 1;
         int rowChecker = cell.column + 1;
-        while (initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column] && columnChecker >= 0 && rowChecker < boardSize) {
+        while (columnChecker >= 0 && rowChecker < boardSize && initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column]) {
             columnChecker--; rowChecker++;
         }
         if (columnChecker>=0 && rowChecker < boardSize && initialState[columnChecker][rowChecker]== player)
@@ -300,8 +297,8 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     if (cell.row < boardSize-1 && initialState[cell.row+1][cell.column] == '*')
     {
         int columnChecker = cell.row - 1;
-        while (initialState[columnChecker][cell.column] == initialState[cell.row][cell.column] && columnChecker >= 0)
-            columnChecker++;
+        while (columnChecker >= 0 && initialState[columnChecker][cell.column] == initialState[cell.row][cell.column])
+            columnChecker--;
         if (columnChecker>=0 && initialState[columnChecker][cell.column]== player)
             moves.push_back(Cell(cell.row+1, cell.column, boardWeights[cell.row+1][cell.column]));
     }
@@ -310,7 +307,7 @@ vector<Cell> Game::FindMovesAdjacentToCell(Cell cell)
     {
         int columnChecker = cell.row - 1;
         int rowChecker = cell.column - 1;
-        while (initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column] && columnChecker >= 0 && rowChecker >= 0) {
+        while (columnChecker >= 0 && rowChecker >= 0 && initialState[columnChecker][rowChecker] == initialState[cell.row][cell.column]) {
             columnChecker--; rowChecker--;
         }
         if (columnChecker>=0 && rowChecker >= 0 && initialState[columnChecker][rowChecker]== player)

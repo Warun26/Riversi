@@ -69,30 +69,32 @@ void Output::WriteNextState(State nextState)
 }
 void Output::WriteMinimaxTraverseLog(vector<Node> traverseLog)
 {
+    this->outputFile<<"Node,Depth,Value"<<endl;
     for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
     {
         this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
-        if (traverseLog[logEntry].value == static_cast<int>(Infinity::NegativeInfinity)) this->outputFile<<"-Infinity"<<endl;
-        else if(traverseLog[logEntry].value == static_cast<int>(Infinity::PositiveInfinity)) this->outputFile<<"Infinity"<<endl;
+        if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity"<<endl;
+        else if(traverseLog[logEntry].value == PositiveInfinity) this->outputFile<<"Infinity"<<endl;
         else this->outputFile<<traverseLog[logEntry].value<<endl;
     }
 }
 
 void Output::WriteAlphaBetaTraverseLog(vector<AlphaBetaNode> traverseLog)
 {
+    this->outputFile<<"Node,Depth,Value,Alpha,Beta"<<endl;
     for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
     {
         this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
-        if (traverseLog[logEntry].value == static_cast<int>(Infinity::NegativeInfinity)) this->outputFile<<"-Infinity"<<",";
-        else if(traverseLog[logEntry].value == static_cast<int>(Infinity::PositiveInfinity)) this->outputFile<<"Infinity"<<",";
+        if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity"<<",";
+        else if(traverseLog[logEntry].value == PositiveInfinity) this->outputFile<<"Infinity"<<",";
         else this->outputFile<<traverseLog[logEntry].value<<",";
         
-        if (traverseLog[logEntry].alpha == static_cast<int>(Infinity::NegativeInfinity)) this->outputFile<<"-Infinity"<<",";
-        else if(traverseLog[logEntry].alpha == static_cast<int>(Infinity::PositiveInfinity)) this->outputFile<<"Infinity"<<",";
+        if (traverseLog[logEntry].alpha == NegativeInfinity) this->outputFile<<"-Infinity"<<",";
+        else if(traverseLog[logEntry].alpha == PositiveInfinity) this->outputFile<<"Infinity"<<",";
         else this->outputFile<<traverseLog[logEntry].alpha<<",";
         
-        if (traverseLog[logEntry].beta == static_cast<int>(Infinity::NegativeInfinity)) outputFile<<"-Infinity"<<endl;
-        else if(traverseLog[logEntry].beta == static_cast<int>(Infinity::PositiveInfinity))outputFile<<"Infinity"<<endl;
+        if (traverseLog[logEntry].beta == NegativeInfinity) outputFile<<"-Infinity"<<endl;
+        else if(traverseLog[logEntry].beta == PositiveInfinity)outputFile<<"Infinity"<<endl;
         else this->outputFile<<traverseLog[logEntry].beta<<endl;
     }
 }

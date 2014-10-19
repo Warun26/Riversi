@@ -8,15 +8,12 @@
 
 #ifndef Riversi_AdversialSearchAlgorithms_h
 #define Riversi_AdversialSearchAlgorithms_h
-#define State vector<vector<char> >
-#include "Game.h"
-#include <vector>
-#include <string>
+
 using namespace std;
 
-enum class Infinity
+enum Infinity
 {
-    PositiveInfinity = 65536,
+    PositiveInfinity = 65535,
     NegativeInfinity = -65535
 };
 
@@ -68,7 +65,7 @@ State AdversialSearch::GreedySearch(Game game)
 {
     State nextState = game.GetCurrentGameState();
     vector<Cell> availableMoves = game.Actions();
-    int maxUtility = static_cast<int>(Infinity::NegativeInfinity);
+    int maxUtility = NegativeInfinity;
     for (int move=0; move<availableMoves.size(); move++)
     {
         Game newGame = *new Game(game);
@@ -87,14 +84,29 @@ State AdversialSearch::MiniMax(Game game, vector<Node>& traverseLog)
 {
     State nextState;
     vector<Cell> availableMoves = game.Actions();
-    int maxValue = static_cast<int>(Infinity::NegativeInfinity);
+    if (game.TerminalTest())
+    {
+        int utility = game.UtilityFunction();
+        traverseLog.push_back(Node("root", 0, utility));
+        return game.GetCurrentGameState();
+    }
+    int maxValue = NegativeInfinity;
     traverseLog.push_back(Node("root", 0, maxValue));
+    if (availableMoves.size()==0)
+    {
+        nextState = game.GetCurrentGameState();
+        Game newGame = *new Game(game.GetPlayer(), game.GetOpponentPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+        string action ="pass";
+        int value = MinValue(newGame, action, 0, traverseLog);
+        if (value > maxValue) maxValue = value;
+        traverseLog.push_back(Node("root", 0, maxValue));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = game.Result(game.GetCurrentGameState(), availableMoves[move]);
         Game newGame = *new Game(game.GetPlayer(), game.GetOpponentPlayer(), newState, game.GetCutOffDepth());
         string action(1,availableMoves[move].column + 'a');
-        action += availableMoves[move].row+1;
+        action += (availableMoves[move].row+1) + '0';
         int value = MinValue(newGame, action, 0, traverseLog);
         if (value > maxValue)
         {
@@ -110,15 +122,30 @@ State AdversialSearch::AlphaBetaSearch(Game game, vector<AlphaBetaNode>& travers
 {
     State nextState;
     vector<Cell> availableMoves = game.Actions();
-    int maxValue = static_cast<int>(Infinity::NegativeInfinity);
-    int minValue = static_cast<int>(Infinity::PositiveInfinity);
+    int maxValue = NegativeInfinity;
+    int minValue = PositiveInfinity;
+    if (game.TerminalTest())
+    {
+        int utility = game.UtilityFunction();
+        traverseLog.push_back(AlphaBetaNode("root", 0, utility, maxValue, minValue));
+        return game.GetCurrentGameState();
+    }
     traverseLog.push_back(AlphaBetaNode("root", 0, maxValue, maxValue, minValue));
+    if (availableMoves.size()==0)
+    {
+        nextState = game.GetCurrentGameState();
+        Game newGame = *new Game(game.GetPlayer(), game.GetOpponentPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+        string action ="pass";
+        int value = PruneMinValue(newGame, action, 0, maxValue, minValue, traverseLog);
+        if (value > maxValue) maxValue = value;
+        traverseLog.push_back(AlphaBetaNode("root", 0, maxValue, maxValue, minValue));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = game.Result(game.GetCurrentGameState(), availableMoves[move]);
         Game newGame = *new Game(game.GetPlayer(), game.GetOpponentPlayer(), newState, game.GetCutOffDepth());
         string action(1,availableMoves[move].column + 'a');
-        action += availableMoves[move].row+1;
+        action += (availableMoves[move].row + 1) + '0';
         int value = PruneMinValue(newGame, action, 0, maxValue, minValue, traverseLog);
         if (value > maxValue)
         {
@@ -139,16 +166,24 @@ int AdversialSearch::MinValue(Game game, string action, int depth, vector<Node>&
         traverseLog.push_back(Node(action, depth, utility));
         return utility;
     }
-    int value = static_cast<int>(Infinity::PositiveInfinity);
+    int value = PositiveInfinity;
     traverseLog.push_back(Node(action, depth, value));
     Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
     vector<Cell>availableMoves = possibleGame.Actions();
+    if (availableMoves.size() == 0)
+    {
+        State newState = possibleGame.GetCurrentGameState();
+        Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
+        string newAction = "pass";
+        value = min(value, MaxValue(newGame, newAction, depth, traverseLog));
+        traverseLog.push_back(Node(action, depth, value));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = possibleGame.Result(availableMoves[move]);
         Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
         string newAction(1,availableMoves[move].column + 'a');
-        newAction += availableMoves[move].row+1;
+        newAction += (availableMoves[move].row+1) +'0';
         value = min(value, MaxValue(newGame, newAction, depth, traverseLog));
         traverseLog.push_back(Node(action, depth, value));
     }
@@ -164,16 +199,24 @@ int AdversialSearch::MaxValue(Game game, string action, int depth, vector<Node>&
         traverseLog.push_back(Node(action, depth, utility));
         return utility;
     }
-    int value = static_cast<int>(Infinity::NegativeInfinity);
+    int value = NegativeInfinity;
     traverseLog.push_back(Node(action, depth, value));
     Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
     vector<Cell>availableMoves = possibleGame.Actions();
+    if (availableMoves.size() == 0)
+    {
+        State newState = possibleGame.GetCurrentGameState();
+        Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
+        string newAction = "pass";
+        value = max(value, MinValue(newGame, newAction, depth, traverseLog));
+        traverseLog.push_back(Node(action, depth, value));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = possibleGame.Result(availableMoves[move]);
         Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
         string newAction(1,availableMoves[move].column + 'a');
-        newAction += availableMoves[move].row+1;
+        newAction += (availableMoves[move].row+1) + '0';
         value = max(value, MinValue(newGame, newAction, depth, traverseLog));
         traverseLog.push_back(Node(action, depth, value));
     }
@@ -189,20 +232,33 @@ int AdversialSearch::PruneMinValue(Game game, string action, int depth, int alph
         traverseLog.push_back(AlphaBetaNode(action, depth, utility, alpha, beta));
         return utility;
     }
-    int value = static_cast<int>(Infinity::PositiveInfinity);
+    int value = PositiveInfinity;
     traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
     Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
     vector<Cell>availableMoves = possibleGame.Actions();
+    if (availableMoves.size() == 0)
+    {
+        State newState = possibleGame.GetCurrentGameState();
+        Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
+        string newAction = "pass";
+        value = min(value, PruneMaxValue(newGame, newAction, depth, alpha, beta, traverseLog));
+        if (value <= alpha) {
+            traverseLog.push_back(AlphaBetaNode(action , depth, value, alpha, beta));
+            return value;
+        }
+        beta = min(beta, value);
+        traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = possibleGame.Result(availableMoves[move]);
         Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
         string newAction(1,availableMoves[move].column + 'a');
-        newAction += availableMoves[move].row+1;
+        newAction += (availableMoves[move].row+1) + '0';
         value = min(value, PruneMaxValue(newGame, newAction, depth, alpha, beta, traverseLog));
         if (value <= alpha)
         {
-            traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, value));
+            traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
             return value;
         }
         beta = min(beta, value);
@@ -220,20 +276,33 @@ int AdversialSearch::PruneMaxValue(Game game, string action, int depth, int alph
         traverseLog.push_back(AlphaBetaNode(action, depth, utility, alpha, beta));
         return utility;
     }
-    int value = static_cast<int>(Infinity::NegativeInfinity);
+    int value = NegativeInfinity;
     traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
     Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
     vector<Cell>availableMoves = possibleGame.Actions();
+    if (availableMoves.size() == 0)
+    {
+        State newState = possibleGame.GetCurrentGameState();
+        Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
+        string newAction = "pass";
+        value = max(value, PruneMinValue(newGame, newAction, depth, alpha, beta, traverseLog));
+        if (value >= beta) {
+            traverseLog.push_back(AlphaBetaNode(action , depth, value, alpha, beta));
+            return value;
+        }
+        alpha = max(alpha, value);
+        traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
+    }
     for (int move=0; move<availableMoves.size(); move++)
     {
         State newState = possibleGame.Result(availableMoves[move]);
         Game newGame = *new Game(possibleGame.GetPlayer(), possibleGame.GetOpponentPlayer(), newState, possibleGame.GetCutOffDepth());
         string newAction(1,availableMoves[move].column + 'a');
-        newAction += availableMoves[move].row+1;
+        newAction += (availableMoves[move].row+1) + '0';
         value = max(value, PruneMinValue(newGame, newAction, depth, alpha, beta, traverseLog));
         if (value >= beta)
         {
-            traverseLog.push_back(AlphaBetaNode(action, depth, value, value, beta));
+            traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
             return value;
         }
         alpha = max(alpha, value);

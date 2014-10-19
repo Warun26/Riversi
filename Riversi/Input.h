@@ -26,8 +26,8 @@ private:
     void SetOpponentPlayer();
     
 public:
-    Input(string inputFileName="Input.txt");
-    Input(int boardSize, string inputFileName="Input.txt");
+    Input(string inputFileName="input.txt");
+    Input(int boardSize, string inputFileName="input.txt");
     int GetBoardSize();
     char GetPlayer();
     int GetCutOffDepth();
