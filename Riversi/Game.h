@@ -73,6 +73,7 @@ public:
     State Result(Cell action);
     bool TerminalTest(State state);
     bool TerminalTest();
+    bool TerminalTest_DEPRECATED(State state);
     int UtilityFunction(State state, char player);
     int UtilityFunction();
     //Getters
@@ -159,6 +160,13 @@ int Game::UtilityFunction()
 
 bool Game::TerminalTest(State state)
 {
+    Cell cell = FindOpponentPiece(0, 0);
+    if (cell.row == -1 && cell.column == -1) return true;
+    else return false;
+}
+
+bool Game::TerminalTest_DEPRECATED(State state)
+{
     if (AllCellsFilled(state)) return true;
     vector<Cell> actions = Actions();
     Game newGame = *new Game(opponentPlayer, player, state, cutOffDepth);
@@ -198,6 +206,11 @@ vector<Cell> Game::Actions(State state)
         }
         x = opponentPiece.row;
         y = opponentPiece.column+1;
+        if (y >= boardSize)
+        {
+            x = opponentPiece.row + 1;
+            y = 0;
+        }
         
     }while(x<boardSize && y<boardSize && opponentPiece.row>=0 && opponentPiece.column >= 0);
     sort(actions.begin(), actions.end(),cellFunction);

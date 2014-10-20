@@ -14,17 +14,19 @@
 class CompetitionSearch
 {
 private:
-    static clock_t tStart;
-    static double timeLimit;
-    static int currentDepthLimit;
-    static int maxDepthLimit;
-    static string AlphaBetaPruning(Competition competition);
-    static double MinValue(Competition competition, int depth, double alpha, double beta);
-    static double MaxValue(Competition competition, int depth, double alpha, double beta);
+    clock_t tStart;
+    double timeLimit;
+    int currentDepthLimit;
+    int maxDepthLimit;
+    string AlphaBetaPruning(Competition competition);
+    double MinValue(Competition competition, int depth, double alpha, double beta);
+    double MaxValue(Competition competition, int depth, double alpha, double beta);
 public:
-    static string IterativeDeepining(Competition competition)
+     string IterativeDeepining(Competition competition)
     {
         tStart = clock();
+        maxDepthLimit = 9;
+        timeLimit = 1000;
         string nextMove = "pass";
         for (int depthLimit = 1; depthLimit<maxDepthLimit; depthLimit++)
         {
@@ -37,8 +39,6 @@ public:
 
 string CompetitionSearch::AlphaBetaPruning(Competition competition)
 {
-    maxDepthLimit = 7;
-    timeLimit = 3;
     string nextMove;
     vector<Cell> availableMoves = competition.Actions();
     int maxValue = NegativeInfinity;

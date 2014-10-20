@@ -227,7 +227,9 @@ int AdversialSearch::MaxValue(Game game, string action, int depth, vector<Node>&
 int AdversialSearch::PruneMinValue(Game game, string action, int depth, int alpha, int beta, vector<AlphaBetaNode>& traverseLog)
 {
     depth += 1;
-    if (game.GetCutOffDepth() <= depth || game.TerminalTest())
+    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+    vector<Cell>availableMoves = possibleGame.Actions();
+    if (game.GetCutOffDepth() <= depth || game.TerminalTest() || (availableMoves.size() == 0 && traverseLog[traverseLog.size()-1].cell.compare("pass") == 0))
     {
         int utility = game.UtilityFunction();
         traverseLog.push_back(AlphaBetaNode(action, depth, utility, alpha, beta));
@@ -235,8 +237,6 @@ int AdversialSearch::PruneMinValue(Game game, string action, int depth, int alph
     }
     int value = PositiveInfinity;
     traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
-    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
-    vector<Cell>availableMoves = possibleGame.Actions();
     if (availableMoves.size() == 0)
     {
         State newState = possibleGame.GetCurrentGameState();
@@ -271,7 +271,9 @@ int AdversialSearch::PruneMinValue(Game game, string action, int depth, int alph
 int AdversialSearch::PruneMaxValue(Game game, string action, int depth, int alpha, int beta, vector<AlphaBetaNode>& traverseLog)
 {
     depth += 1;
-    if (game.GetCutOffDepth() <= depth || game.TerminalTest())
+    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+    vector<Cell>availableMoves = possibleGame.Actions();
+    if (game.GetCutOffDepth() <= depth || game.TerminalTest() || (availableMoves.size() == 0 && traverseLog[traverseLog.size()-1].cell.compare("pass") == 0))
     {
         int utility = -1*game.UtilityFunction();
         traverseLog.push_back(AlphaBetaNode(action, depth, utility, alpha, beta));
@@ -279,8 +281,6 @@ int AdversialSearch::PruneMaxValue(Game game, string action, int depth, int alph
     }
     int value = NegativeInfinity;
     traverseLog.push_back(AlphaBetaNode(action, depth, value, alpha, beta));
-    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
-    vector<Cell>availableMoves = possibleGame.Actions();
     if (availableMoves.size() == 0)
     {
         State newState = possibleGame.GetCurrentGameState();

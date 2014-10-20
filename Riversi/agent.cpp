@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
         case 4:
         {
             Competition competition(input.GetPlayer(), input.GetOpponentPlayer(), input.GetBoard());
-            string nextMove = CompetitionSearch::IterativeDeepining(competition);
+            string nextMove = CompetitionSearch().IterativeDeepining(competition);
             Output output(nextMove);
             break;
         }
