@@ -156,6 +156,7 @@ State AdversialSearch::AlphaBetaSearch(Game game, vector<AlphaBetaNode>& travers
     }
     return nextState;
 }
+
 //PRIVATE FUNCTIONS
 int AdversialSearch::MinValue(Game game, string action, int depth, vector<Node>& traverseLog)
 {
@@ -310,5 +311,6 @@ int AdversialSearch::PruneMaxValue(Game game, string action, int depth, int alph
     }
     return value;
 }
+
 
 #endif
