@@ -21,6 +21,7 @@ public:
     Output(State nextState, string outputFileName="output.txt");
     Output(State nextState, vector<Node>traverseLog, string outputFileName="output.txt");
     Output(State nextState, vector<AlphaBetaNode>traverseLog, string outputFileName="output.txt");
+    Output(string nextMove, string outputFileName="output.txt");
 };
 
 //CONSTRUCTORS
@@ -56,6 +57,15 @@ Output::Output(State nextState, vector<AlphaBetaNode>traverseLog, string outputF
     this->outputFile.close();
 }
 
+Output::Output(string nextMove, string outputFileName)
+{
+    char *fileName=new char[outputFileName.size()+1];
+    fileName[outputFileName.size()]=0;
+    memcpy(fileName,outputFileName.c_str(),outputFileName.size());
+    this->outputFile.open(fileName);
+    outputFile<<nextMove;
+    this->outputFile.close();
+}
 //PRIVATE FUNCTIONS
 
 void Output::WriteNextState(State nextState)

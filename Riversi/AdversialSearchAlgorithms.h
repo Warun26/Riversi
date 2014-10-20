@@ -312,5 +312,4 @@ int AdversialSearch::PruneMaxValue(Game game, string action, int depth, int alph
     return value;
 }
 
-
 #endif

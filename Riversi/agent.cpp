@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "Competition.h"
 #include "AdversialSearchAlgorithms.h"
+#include "CompetitionSearch.h"
 #include "Output.h"
 
 int main(int argc, const char * argv[])
@@ -42,6 +43,8 @@ int main(int argc, const char * argv[])
         case 4:
         {
             Competition competition(input.GetPlayer(), input.GetOpponentPlayer(), input.GetBoard());
+            string nextMove = CompetitionSearch::IterativeDeepining(competition);
+            Output output(nextMove);
             break;
         }
         default:
