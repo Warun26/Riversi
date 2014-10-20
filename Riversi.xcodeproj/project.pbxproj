@@ -28,6 +28,7 @@
 		8B84A68519E8CE1000099A2D /* Input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		8B84A68719E8D88300099A2D /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		8B84A68B19E9ED7000099A2D /* AdversialSearchAlgorithms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdversialSearchAlgorithms.h; sourceTree = "<group>"; };
+		8BCA115019F3943C003EA93D /* Competition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Competition.h; sourceTree = "<group>"; };
 		8BE14D1619F0FAFD00BACD28 /* Output.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				8B84A67C19E8BDA300099A2D /* agent.cpp */,
+				8BCA115019F3943C003EA93D /* Competition.h */,
 				8B84A68519E8CE1000099A2D /* Input.h */,
 				8B84A68719E8D88300099A2D /* Game.h */,
 				8B84A68B19E9ED7000099A2D /* AdversialSearchAlgorithms.h */,

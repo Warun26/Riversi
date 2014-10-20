@@ -69,20 +69,27 @@ void Output::WriteNextState(State nextState)
 }
 void Output::WriteMinimaxTraverseLog(vector<Node> traverseLog)
 {
+    int logEntry;
     this->outputFile<<"Node,Depth,Value"<<endl;
-    for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
+    for (logEntry = 0; logEntry < traverseLog.size()-1; logEntry++)
     {
         this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
         if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity"<<endl;
         else if(traverseLog[logEntry].value == PositiveInfinity) this->outputFile<<"Infinity"<<endl;
         else this->outputFile<<traverseLog[logEntry].value<<endl;
     }
+    //Hack to prevent new line at the end of file
+    this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
+    if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity";
+    else if(traverseLog[logEntry].value == PositiveInfinity) this->outputFile<<"Infinity";
+    else this->outputFile<<traverseLog[logEntry].value;
 }
 
 void Output::WriteAlphaBetaTraverseLog(vector<AlphaBetaNode> traverseLog)
 {
+    int logEntry;
     this->outputFile<<"Node,Depth,Value,Alpha,Beta"<<endl;
-    for (int logEntry = 0; logEntry < traverseLog.size(); logEntry++)
+    for (logEntry = 0; logEntry < traverseLog.size()-1; logEntry++)
     {
         this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
         if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity"<<",";
@@ -97,5 +104,17 @@ void Output::WriteAlphaBetaTraverseLog(vector<AlphaBetaNode> traverseLog)
         else if(traverseLog[logEntry].beta == PositiveInfinity)outputFile<<"Infinity"<<endl;
         else this->outputFile<<traverseLog[logEntry].beta<<endl;
     }
+    this->outputFile<<traverseLog[logEntry].cell<<","<<traverseLog[logEntry].depth<<",";
+    if (traverseLog[logEntry].value == NegativeInfinity) this->outputFile<<"-Infinity"<<",";
+    else if(traverseLog[logEntry].value == PositiveInfinity) this->outputFile<<"Infinity"<<",";
+    else this->outputFile<<traverseLog[logEntry].value<<",";
+    
+    if (traverseLog[logEntry].alpha == NegativeInfinity) this->outputFile<<"-Infinity"<<",";
+    else if(traverseLog[logEntry].alpha == PositiveInfinity) this->outputFile<<"Infinity"<<",";
+    else this->outputFile<<traverseLog[logEntry].alpha<<",";
+    
+    if (traverseLog[logEntry].beta == NegativeInfinity) outputFile<<"-Infinity";
+    else if(traverseLog[logEntry].beta == PositiveInfinity)outputFile<<"Infinity";
+    else this->outputFile<<traverseLog[logEntry].beta;
 }
 #endif
