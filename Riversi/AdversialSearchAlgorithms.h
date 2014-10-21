@@ -161,7 +161,9 @@ State AdversialSearch::AlphaBetaSearch(Game game, vector<AlphaBetaNode>& travers
 int AdversialSearch::MinValue(Game game, string action, int depth, vector<Node>& traverseLog)
 {
     depth += 1;
-    if (game.GetCutOffDepth() <= depth || game.TerminalTest())
+    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+    vector<Cell>availableMoves = possibleGame.Actions();
+    if (game.GetCutOffDepth() <= depth || game.TerminalTest() || (availableMoves.size() == 0 && traverseLog[traverseLog.size()-1].cell.compare("pass") == 0))
     {
         int utility = game.UtilityFunction();
         traverseLog.push_back(Node(action, depth, utility));
@@ -169,8 +171,6 @@ int AdversialSearch::MinValue(Game game, string action, int depth, vector<Node>&
     }
     int value = PositiveInfinity;
     traverseLog.push_back(Node(action, depth, value));
-    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
-    vector<Cell>availableMoves = possibleGame.Actions();
     if (availableMoves.size() == 0)
     {
         State newState = possibleGame.GetCurrentGameState();
@@ -194,7 +194,9 @@ int AdversialSearch::MinValue(Game game, string action, int depth, vector<Node>&
 int AdversialSearch::MaxValue(Game game, string action, int depth, vector<Node>& traverseLog)
 {
     depth += 1;
-    if (game.GetCutOffDepth() <= depth || game.TerminalTest())
+    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
+    vector<Cell>availableMoves = possibleGame.Actions();
+    if (game.GetCutOffDepth() <= depth || game.TerminalTest() || (availableMoves.size() == 0 && traverseLog[traverseLog.size()-1].cell.compare("pass") == 0))
     {
         int utility = -1*game.UtilityFunction();
         traverseLog.push_back(Node(action, depth, utility));
@@ -202,8 +204,6 @@ int AdversialSearch::MaxValue(Game game, string action, int depth, vector<Node>&
     }
     int value = NegativeInfinity;
     traverseLog.push_back(Node(action, depth, value));
-    Game possibleGame = *new Game(game.GetOpponentPlayer(), game.GetPlayer(), game.GetCurrentGameState(), game.GetCutOffDepth());
-    vector<Cell>availableMoves = possibleGame.Actions();
     if (availableMoves.size() == 0)
     {
         State newState = possibleGame.GetCurrentGameState();
