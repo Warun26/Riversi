@@ -16,7 +16,7 @@
 
 int main(int argc, const char * argv[])
 {
-    Input input = *new Input();
+    Input input = *new Input("/Users/varun/Documents/Artificial Intelligence/Riversi/Riversi/input.txt");
     Game game = *new Game(input.GetPlayer(), input.GetOpponentPlayer(), input.GetBoard(), input.GetCutOffDepth());
     switch (input.GetSearchAlgorithm())
     {
