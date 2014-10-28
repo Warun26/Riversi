@@ -25,8 +25,8 @@ public:
      string IterativeDeepining(Competition competition)
     {
         tStart = clock();
-        maxDepthLimit = 9;
-        timeLimit = 1000;
+        maxDepthLimit = 12;
+        timeLimit = 3;
         string nextMove = "pass";
         for (int depthLimit = 1; depthLimit<maxDepthLimit; depthLimit++)
         {
